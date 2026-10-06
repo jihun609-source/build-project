@@ -1,0 +1,22 @@
+# CPU distribution. CUDA libraries and AI model weights are not bundled.
+fastapi>=0.115
+uvicorn[standard]>=0.30
+python-multipart>=0.0.9
+pyyaml>=6.0
+python-dotenv>=1.0
+httpx>=0.27
+jsonschema>=4.22
+pillow>=10.3
+yt-dlp>=2025.1.1
+faster-whisper>=1.1.0
+google-genai>=1.0
+anthropic>=0.40
+google-api-python-client>=2.130
+google-auth-oauthlib>=1.2
+google-auth-httplib2>=0.2
+tzdata>=2024.1
+qrcode>=7.4
+selenium>=4.9,<5
+undetected-chromedriver==3.5.5
+setuptools>=65,<81
+pyinstaller>=6.13,<7

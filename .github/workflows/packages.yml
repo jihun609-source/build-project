@@ -1,0 +1,127 @@
+name: Build desktop installers
+run-name: Desktop installers ${{ inputs.version || github.ref_name }}
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Package version (N.N.N)
+        default: '1.0.0'
+        required: true
+  push:
+    tags: ['v*']
+permissions:
+  contents: read
+jobs:
+  version:
+    runs-on: ubuntu-latest
+    outputs:
+      value: ${{ steps.version.outputs.value }}
+    steps:
+      - name: Validate version
+        id: version
+        env:
+          INPUT_VERSION: ${{ inputs.version }}
+        run: |
+          version="${INPUT_VERSION:-${GITHUB_REF_NAME#v}}"
+          if [[ ! "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo 'Version must have the form N.N.N' >&2
+            exit 1
+          fi
+          echo "value=$version" >> "$GITHUB_OUTPUT"
+  package:
+    needs: version
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            name: windows-x64
+            output: windows
+          - os: macos-15
+            name: macos-arm64
+            output: macos/arm64
+          - os: macos-15-intel
+            name: macos-x64
+            output: macos/x64
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - name: Python dependencies
+        run: python -m pip install -r packaging/requirements.txt
+      - name: Web UI
+        shell: bash
+        run: |
+          npm --prefix web ci
+          npm --prefix web run build
+      - name: FFmpeg (macOS)
+        if: runner.os == 'macOS'
+        run: brew install ffmpeg
+      - name: FFmpeg (Windows)
+        if: runner.os == 'Windows'
+        uses: FedericoCarboni/setup-ffmpeg@v3
+      - name: Package and offline self-test
+        shell: bash
+        env:
+          PACKAGE_VERSION: ${{ needs.version.outputs.value }}
+        run: python packaging/build.py --version "$PACKAGE_VERSION"
+      - name: Save verified installers
+        uses: actions/upload-artifact@v4
+        with:
+          name: AutoSet-${{ matrix.name }}
+          path: releases/${{ matrix.output }}/
+          compression-level: 0
+          if-no-files-found: error
+          retention-days: 30
+      - name: Save diagnostic reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Diagnostics-${{ matrix.name }}
+          path: |
+            releases/${{ matrix.output }}/*self-test.json
+            build/AutoSet/warn-AutoSet.txt
+          if-no-files-found: ignore
+          retention-days: 30
+  downloads:
+    name: Organize Windows and macOS downloads
+    needs: [version, package]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: AutoSet-windows-x64
+          path: downloads/Windows
+      - uses: actions/download-artifact@v4
+        with:
+          name: AutoSet-macos-arm64
+          path: downloads/macOS/AppleSilicon
+      - uses: actions/download-artifact@v4
+        with:
+          name: AutoSet-macos-x64
+          path: downloads/macOS/Intel
+      - name: Verify checksums and include user guide
+        run: |
+          for target in Windows macOS/AppleSilicon macOS/Intel; do
+            (cd "downloads/$target" && sha256sum -c -- *.sha256)
+          done
+          cp README.md downloads/README.md
+          mkdir -p downloads/packaging
+          cp packaging/README.md downloads/packaging/README.md
+      - name: Save organized downloads
+        uses: actions/upload-artifact@v4
+        with:
+          name: AutoSet-downloads-${{ needs.version.outputs.value }}
+          path: downloads/
+          compression-level: 0
+          if-no-files-found: error
+          retention-days: 30

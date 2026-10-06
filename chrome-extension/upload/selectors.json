@@ -1,0 +1,31 @@
+{
+  "_comment": "YouTube 스튜디오 DOM 셀렉터. 각 항목은 위에서부터 차례로 시도한다. 스튜디오 화면이 바뀌면 웹 UI(업로드 설정)에서 고친다.",
+  "create_button": ["ytcp-button#create-icon", "#create-icon", "[aria-label='만들기']", "[aria-label='Create']"],
+  "upload_menu_item": ["tp-yt-paper-item#text-item-0", "[test-id='upload-beta']", "ytcp-text-menu tp-yt-paper-item"],
+  "upload_dialog": ["ytcp-uploads-dialog"],
+  "file_input": ["ytcp-uploads-dialog input[type='file']", "input[type='file'][name='Filedata']"],
+  "title_box": ["#title-textarea #textbox", "ytcp-social-suggestions-textbox#title-textarea [contenteditable='true']"],
+  "description_box": ["#description-textarea #textbox", "ytcp-social-suggestions-textbox#description-textarea [contenteditable='true']"],
+  "show_more": ["ytcp-button#toggle-button", "#toggle-button"],
+  "tags_input": ["ytcp-form-input-container#tags-container input", "#tags-container input", "input[aria-label='태그']", "input[aria-label='Tags']"],
+  "not_made_for_kids": ["tp-yt-paper-radio-button[name='VIDEO_MADE_FOR_KIDS_NOT_MFK']", "[name='VIDEO_MADE_FOR_KIDS_NOT_MFK']"],
+  "next_button": ["ytcp-button#next-button", "#next-button"],
+  "visibility": {
+    "public": ["tp-yt-paper-radio-button[name='PUBLIC']"],
+    "unlisted": ["tp-yt-paper-radio-button[name='UNLISTED']"],
+    "private": ["tp-yt-paper-radio-button[name='PRIVATE']"]
+  },
+  "schedule_expand": ["#second-container-expand-button", "ytcp-icon-button#second-container-expand-button"],
+  "schedule_date_trigger": ["#datepicker-trigger", "ytcp-dropdown-trigger#datepicker-trigger"],
+  "schedule_date_input": ["ytcp-date-picker tp-yt-paper-input input", "tp-yt-paper-dialog ytcp-date-picker input"],
+  "schedule_time_input": ["#time-of-day-container input", "ytcp-form-input-container#time-of-day-container input"],
+  "done_button": ["ytcp-button#done-button", "#done-button"],
+  "progress_label": ["ytcp-video-upload-progress .progress-label", ".progress-label"],
+  "video_link": [".video-url-fadeable a", "ytcp-video-info a[href*='youtu']"],
+  "published_dialog": ["ytcp-video-share-dialog", "ytcp-uploads-still-processing-dialog"],
+  "published_close": ["ytcp-video-share-dialog #close-button", "ytcp-uploads-still-processing-dialog ytcp-button", "#close-button"],
+  "known_dialogs": ["ytcp-uploads-dialog", "ytcp-video-share-dialog", "ytcp-uploads-still-processing-dialog", "ytcp-date-picker"],
+  "any_dialog": ["tp-yt-paper-dialog[opened]", "ytcp-dialog[opened]", "tp-yt-iron-overlay-backdrop.opened + tp-yt-paper-dialog"],
+  "upload_complete_texts": ["업로드 완료", "처리 완료", "확인 완료", "Upload complete", "Processing", "Checks complete", "처리 중", "SD 처리"],
+  "past_time_error_texts": ["과거", "in the past", "미래의 날짜", "future"]
+}

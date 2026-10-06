@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <style>
+    body { font: 13px/1.4 "Malgun Gothic", system-ui, sans-serif; width: 300px; margin: 0; color: #1e293b; }
+    header { background: #0f172a; color: #fff; padding: 10px 12px; font-weight: 700; display: flex; align-items: center; }
+    header span { flex: 1; }
+    main { padding: 10px 12px; display: grid; gap: 8px; }
+    label { font-size: 11px; color: #64748b; display: grid; gap: 2px; }
+    input[type=text], input[type=password] { padding: 5px 6px; border: 1px solid #cbd5e1; border-radius: 5px; font: inherit; }
+    button { padding: 6px 8px; border-radius: 5px; border: 1px solid #cbd5e1; background: #fff; cursor: pointer; font: inherit; }
+    button.primary { background: #4f46e5; border-color: #4f46e5; color: #fff; }
+    .row { display: flex; gap: 6px; align-items: center; }
+    .row > * { flex: 1; }
+    .stat { display: flex; justify-content: space-between; background: #f1f5f9; border-radius: 5px; padding: 6px 8px; }
+    .warn { background: #fef3c7; color: #92400e; border-radius: 5px; padding: 6px 8px; font-size: 12px; }
+    .err { color: #dc2626; font-size: 12px; }
+    .ok { color: #059669; }
+    .switch { display: flex; gap: 6px; align-items: center; font-size: 13px; color: #1e293b; }
+    a { color: #4f46e5; }
+  </style>
+</head>
+<body>
+  <header><span>AutoSet</span><small id="conn">…</small></header>
+  <main>
+    <label class="switch"><input type="checkbox" id="enabled" /> 릴스 기록 켜기</label>
+    <label class="switch"><input type="checkbox" id="autoNext" /> 영상이 끝나면 다음 릴스로 자동 넘기기</label>
+    <div class="stat"><span>오늘 기록</span><b id="today">0</b></div>
+    <div class="stat"><span>전송 대기</span><b id="queue">0</b></div>
+    <div id="warning" class="warn" hidden></div>
+    <div id="error" class="err" hidden></div>
+    <details id="diagBox" style="font-size:11px;color:#475569"><summary>진단 정보</summary><pre id="diag" style="white-space:pre-wrap;margin:4px 0 0"></pre></details>
+    <label>서버 주소<input type="text" id="server" placeholder="http://192.168.0.10:8000" /></label>
+    <label>접속 토큰 (config.yaml ui.token)<input type="password" id="token" /></label>
+    <div class="row"><button id="save">저장</button><button id="open">관리 UI 열기</button></div>
+    <button id="upload" class="primary">다음 항목 업로드 (한 건)</button>
+    <div id="uploadMsg" class="err" hidden></div>
+  </main>
+  <script src="popup.js"></script>
+</body>
+</html>

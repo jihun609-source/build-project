@@ -1,0 +1,21 @@
+{
+  "manifest_version": 3,
+  "name": "AutoSet 릴스 수집·업로드",
+  "version": "1.1.0",
+  "description": "보고 있는 인스타그램 릴스를 AutoSet 서버에 기록하고, 요청 시 YouTube 스튜디오 업로드를 한 건씩 돕습니다.",
+  "permissions": ["storage", "activeTab", "scripting"],
+  "host_permissions": [
+    "https://www.instagram.com/*",
+    "https://studio.youtube.com/*",
+    "http://localhost/*",
+    "http://127.0.0.1/*"
+  ],
+  "optional_host_permissions": ["http://*/*", "https://*/*"],
+  "background": { "service_worker": "background.js" },
+  "action": { "default_popup": "popup.html", "default_title": "AutoSet" },
+  "content_scripts": [
+    { "matches": ["https://www.instagram.com/*"], "js": ["collect/content.js"], "run_at": "document_idle" },
+    { "matches": ["https://studio.youtube.com/*"], "js": ["upload/content.js"], "run_at": "document_idle" }
+  ],
+  "web_accessible_resources": []
+}
