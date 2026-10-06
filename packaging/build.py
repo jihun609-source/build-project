@@ -66,6 +66,10 @@ def main():
         parser.error('Provide --ffmpeg-dir with ffmpeg and ffprobe.')
     if not (ROOT / 'web/dist/index.html').is_file():
         parser.error('Build the web UI first: cd web && npm ci && npm run build')
+    filters = subprocess.run([str(ffmpeg / ('ffmpeg' + suffix)), '-hide_banner', '-filters'],
+                             capture_output=True, text=True, timeout=30, check=True)
+    if 'subtitles' not in filters.stdout:
+        parser.error('This FFmpeg has no subtitles/libass filter. Use a full build or packaging/fetch_ffmpeg.py on macOS.')
     example = (ROOT / '.env.example').read_text(encoding='utf-8-sig')
     if re.search(r'^\w*(?:KEY|TOKEN|SECRET)\w*[ \t]*=[ \t]*\S+', example, re.MULTILINE):
         parser.error('.env.example must not contain populated credentials.')

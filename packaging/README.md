@@ -25,14 +25,16 @@ Inno Setup을 다른 곳에 설치했으면 `--iscc "경로\ISCC.exe"`를 추가
 [PyInstaller 문서](https://pyinstaller.org/en/stable/usage.html)를 참고하세요.
 
 ```bash
-brew install python@3.12 python-tk@3.12 node ffmpeg
+brew install python@3.12 python-tk@3.12 node
 chmod +x build_mac.command
 ./build_mac.command --version 1.0.0
 ```
 
 터미널에서 python3.12와 npm이 실행되어야 합니다. Homebrew 셸 설정을 먼저 적용하세요.
 결과: `releases/macos/arm64/AutoSet-1.0.0-macos-arm64.dmg` 또는 `releases/macos/x64/AutoSet-1.0.0-macos-x64.dmg`와 진단 JSON.
-앱 안에 FFmpeg의 Homebrew 동적 라이브러리도 수집합니다. 다른 맥에서는 Homebrew가 필요 없습니다.
+빌드 스크립트가 CPU에 맞는 정적 FFmpeg/ffprobe 빌드와 라이선스 안내를 내려받아 앱에 포함합니다.
+이 빌드에는 자막 합성에 필요한 libass 필터가 있습니다. 사용자의 맥에서는 Homebrew가 필요 없습니다.
+직접 지정하는 경우에도 `ffmpeg -filters`에 `subtitles`가 있어야 합니다. 일반 Homebrew ffmpeg는 이 필터가 없을 수 있습니다.
 생성된 앱을 빌드 도구가 없는 새 맥에서도 실행해 Chrome 로그인·자막 합성·업로드를 확인한 뒤 배포하세요.
 
 ## GitHub Actions로 세 종류 만들기
