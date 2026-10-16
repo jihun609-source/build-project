@@ -12,11 +12,11 @@ CUDA 라이브러리와 AI 모델, Chrome, Ollama는 포함하지 않습니다. 
 3. 프로젝트에서 실행합니다.
 
 ```bat
-build_windows.bat --ffmpeg-dir "C:\ffmpeg\bin" --version 1.0.0
+build_windows.bat --ffmpeg-dir "C:\ffmpeg\bin" --version 1.0.1
 ```
 
 Inno Setup을 다른 곳에 설치했으면 `--iscc "경로\ISCC.exe"`를 추가합니다.
-결과: `releases/windows/AutoSet-1.0.0-windows-x64-setup.exe`, portable.zip, SHA-256 파일, 자체 진단 JSON.
+결과: `releases/windows/AutoSet-1.0.1-windows-x64-setup.exe`, portable.zip, SHA-256 파일, 자체 진단 JSON.
 관리자 권한 없이 사용자 계정에 설치하며, 삭제해도 사용자 데이터 폴더는 보존합니다.
 
 ## macOS Apple Silicon / Intel
@@ -27,11 +27,11 @@ Inno Setup을 다른 곳에 설치했으면 `--iscc "경로\ISCC.exe"`를 추가
 ```bash
 brew install python@3.12 python-tk@3.12 node
 chmod +x build_mac.command
-./build_mac.command --version 1.0.0
+./build_mac.command --version 1.0.1
 ```
 
 터미널에서 python3.12와 npm이 실행되어야 합니다. Homebrew 셸 설정을 먼저 적용하세요.
-결과: `releases/macos/arm64/AutoSet-1.0.0-macos-arm64.dmg` 또는 `releases/macos/x64/AutoSet-1.0.0-macos-x64.dmg`와 진단 JSON.
+결과: `releases/macos/arm64/AutoSet-1.0.1-macos-arm64.dmg` 또는 `releases/macos/x64/AutoSet-1.0.1-macos-x64.dmg`와 진단 JSON.
 빌드 스크립트가 CPU에 맞는 정적 FFmpeg/ffprobe 빌드와 라이선스 안내를 내려받아 앱에 포함합니다.
 이 빌드에는 자막 합성에 필요한 libass 필터가 있습니다. 사용자의 맥에서는 Homebrew가 필요 없습니다.
 직접 지정하는 경우에도 `ffmpeg -filters`에 `subtitles`가 있어야 합니다. 일반 Homebrew ffmpeg는 이 필터가 없을 수 있습니다.
@@ -41,7 +41,7 @@ chmod +x build_mac.command
 
 이 프로젝트를 GitHub 저장소에 올린 뒤 **Actions → Build desktop installers → Run workflow**에서 버전을 입력합니다.
 Windows x64, macOS Apple Silicon, macOS Intel 작업이 각각 수행됩니다.
-완료된 작업의 **Artifacts → AutoSet-downloads-1.0.0**을 내려받아 압축을 풀면 다음 폴더로 나뉩니다.
+완료된 작업의 **Artifacts → AutoSet-downloads-1.0.1**을 내려받아 압축을 풀면 다음 폴더로 나뉩니다.
 
 ```text
 Windows/               # 설치 EXE, 무설치 ZIP
@@ -52,16 +52,16 @@ README.md             # AI·확장프로그램·계정 설정
 
 `AutoSet-windows-x64`, `AutoSet-macos-arm64`, `AutoSet-macos-x64`에서 한 OS의 파일만 따로 받을 수도 있습니다.
 세 빌드와 자체 진단이 모두 성공해야 통합 다운로드 묶음을 만듭니다. 실패한 빌드의 결과는 통합하지 않으며,
-`Diagnostics-*`에서 진단 보고서를 확인할 수 있습니다. `v1.0.0` 같은 태그로도 실행할 수 있습니다.
+`Diagnostics-*`에서 진단 보고서를 확인할 수 있습니다. `v1.0.1` 같은 태그로도 실행할 수 있습니다.
 외부 공개나 GitHub Release 게시를 자동으로 수행하지 않습니다.
 
 GitHub에 올릴 코드만 ZIP으로 준비하려면 다음 명령을 실행합니다.
 
 ```sh
-python packaging/source_archive.py --version 1.0.0
+python packaging/source_archive.py --version 1.0.1
 ```
 
-`releases/AutoSet-1.0.0-github-source.zip`에 소스와 Actions 설정만 들어갑니다.
+`releases/AutoSet-1.0.1-github-source.zip`에 소스와 Actions 설정만 들어갑니다.
 개인 설정·영상·DB·API 키·Chrome 프로필·사용자 프롬프트·빌드 도구는 포함하지 않습니다.
 저장소에 올릴 때 ZIP의 내용을 풀어 저장소 루트에 넣으세요. 수동 Actions 실행에는 대상 저장소의 쓰기 권한이 필요하며,
 워크플로 파일이 기본 브랜치에 있어야 합니다. [GitHub 공식 안내](https://docs.github.com/en/actions/how-tos/manage-workflow-runs/manually-run-a-workflow)를 참고하세요.

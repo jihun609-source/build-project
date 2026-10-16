@@ -39,5 +39,5 @@ exe = EXE(pyz, a.scripts, [], exclude_binaries=True, name='AutoSet',
 collection = COLLECT(exe, a.binaries, a.datas, strip=False, upx=False, name='AutoSet')
 if sys.platform == 'darwin':
     app = BUNDLE(collection, name='AutoSet.app', bundle_identifier='app.autoset.desktop',
-        info_plist={'CFBundleShortVersionString': os.environ.get('AUTOSET_VERSION', '1.0.0'),
+        info_plist={'CFBundleShortVersionString': os.environ.get('AUTOSET_VERSION', '1.0.1'),
                     'NSHighResolutionCapable': True})

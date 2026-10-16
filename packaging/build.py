@@ -50,7 +50,7 @@ def licenses(stage: Path, ffmpeg: Path):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--version', default='1.0.0')
+    parser.add_argument('--version', default='1.0.1')
     parser.add_argument('--ffmpeg-dir', type=Path)
     parser.add_argument('--iscc', type=Path)
     parser.add_argument('--bundle-only', action='store_true')

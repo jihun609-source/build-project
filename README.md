@@ -16,10 +16,10 @@ Chrome, Ollama 및 AI 모델, API 키, YouTube 로그인은 아래 안내대로 
 
 | PC | 받을 파일 | 실행 방법 |
 |---|---|---|
-| Windows 10/11 x64 | `AutoSet-1.0.0-windows-x64-setup.exe` | 설치 후 시작 메뉴에서 AutoSet 실행 |
-| Windows 무설치 | `AutoSet-1.0.0-windows-x64-portable.zip` | **전체 압축을 풀고** 폴더 안의 AutoSet.exe 실행 |
-| Apple Silicon 맥 | `AutoSet-1.0.0-macos-arm64.dmg` | AutoSet.app을 Applications로 드래그한 뒤 실행 |
-| Intel 맥 | `AutoSet-1.0.0-macos-x64.dmg` | AutoSet.app을 Applications로 드래그한 뒤 실행 |
+| Windows 10/11 x64 | `AutoSet-1.0.1-windows-x64-setup.exe` | 설치 후 시작 메뉴에서 AutoSet 실행 |
+| Windows 무설치 | `AutoSet-1.0.1-windows-x64-portable.zip` | **전체 압축을 풀고** 폴더 안의 AutoSet.exe 실행 |
+| Apple Silicon 맥 | `AutoSet-1.0.1-macos-arm64.dmg` | AutoSet.app을 Applications로 드래그한 뒤 실행 |
+| Intel 맥 | `AutoSet-1.0.1-macos-x64.dmg` | AutoSet.app을 Applications로 드래그한 뒤 실행 |
 
 파일은 빌드 PC의 `releases/` 또는 GitHub Actions의 Artifacts에 만들어집니다.
 빌드 PC에서는 `releases/windows/`, `releases/macos/arm64/`, `releases/macos/x64/`로 구분합니다.
@@ -31,6 +31,8 @@ macOS 파일은 해당 맥 또는 Actions에서 빌드해야 합니다. 맥 빌�
 실행하면 작은 AutoSet 창과 브라우저 관리 화면이 열립니다. 이 PC에서 자동으로 연 관리 화면은 토큰을 입력하지 않아도 됩니다.
 브라우저만 닫으면 프로그램은 계속 실행되며, AutoSet 창의 **종료** 버튼 또는 창 닫기를 누르면 서버와 작업을 정리합니다.
 창의 **관리 화면 열기**, **데이터 폴더**, **확장프로그램 폴더** 버튼으로 다시 열 수 있습니다.
+**사전 설치**의 **Chrome 설치**, **Ollama 설치**, **모델 설치 안내** 버튼은 각각 공식 설치·모델 페이지를 엽니다.
+모델 안내는 현재 설정한 Ollama 모델을 따릅니다. 기본 모델은 `gemma4:e4b`입니다.
 동일 PC에서 중복 실행하면 기존 관리 화면을 엽니다. 기본 8000 포트가 사용 중이면 가까운 빈 포트를 선택합니다.
 실제 주소와 포트는 AutoSet 창에 표시됩니다. 확장프로그램과 OAuth 설정에는 그 주소를 사용하세요.
 
@@ -62,7 +64,7 @@ macOS에서 차단되면 **시스템 설정 → 개인정보 보호 및 보안 �
 AI가 제목·설명·캡션을 만들 때는 브라우저의 AI 확장프로그램이 필요하지 않습니다.
 AutoSet 크롬 확장프로그램은 **릴스 수집과 C안 업로드**에 쓰이며, AI는 Ollama 또는 API 서버로 직접 요청합니다.
 
-1. [Ollama 다운로드](https://ollama.com/download)에서 Windows 또는 macOS 앱을 설치하고 실행합니다.
+1. AutoSet 실행 창이나 **AI·프롬프트 → Ollama**의 **Ollama 설치** 버튼으로 공식 다운로드 페이지를 열어 Windows 또는 macOS 앱을 설치하고 실행합니다.
 2. PowerShell(Windows) 또는 터미널(macOS)에서 기본 모델을 내려받습니다.
 
 ```sh
@@ -72,6 +74,8 @@ ollama list
 
 터미널 대신 **AI·프롬프트 → Ollama**의 모델 받기 입력칸에 `gemma4:e4b`를 입력하고
 **모델 받기**를 눌러도 됩니다. Ollama 앱은 먼저 실행해 두세요.
+입력칸은 현재 사용 모델로 자동 채워지며, **모델 설치 안내** 버튼으로 해당 모델의 공식 페이지를 볼 수 있습니다.
+모델 안내 링크를 여는 것만으로 모델이 설치되지는 않습니다. 설치는 **모델 받기** 또는 위 명령으로 진행하세요.
 
 3. AutoSet의 **AI·프롬프트**에서 Ollama 주소를 `http://localhost:11434`, 모델을 `gemma4:e4b`로 저장합니다.
 4. **시스템**에서 Ollama가 **연결됨**이고 모델이 설치된 상태인지 확인합니다.

@@ -12,6 +12,7 @@ import time
 import traceback
 import webbrowser
 from pathlib import Path
+from urllib.parse import quote
 
 from src import config as C
 
@@ -160,11 +161,11 @@ def desktop():
         return 0
     root = tk.Tk()
     root.title("AutoSet")
-    root.geometry("540x265")
+    root.geometry("600x365")
     root.resizable(False, False)
     status = tk.StringVar(value="프로그램을 시작하는 중입니다…")
     ttk.Label(root, text="AutoSet", font=("", 20, "bold")).pack(pady=(20, 8))
-    ttk.Label(root, textvariable=status, wraplength=500).pack(pady=4)
+    ttk.Label(root, textvariable=status, wraplength=560).pack(pady=4)
     ttk.Label(root, text="이 창을 닫거나 종료를 누르면 작업과 서버가 종료됩니다.").pack(pady=6)
     frame = ttk.Frame(root)
     frame.pack(pady=12)
@@ -181,6 +182,11 @@ def desktop():
         else:
             import subprocess
             subprocess.Popen(["/usr/bin/open", str(path)])
+
+    def open_model_guide():
+        model = C.get_config()["ai"]["ollama"]["model"].strip()
+        prefix = "https://ollama.com/" if "/" in model else "https://ollama.com/library/"
+        webbrowser.open(prefix + quote(model, safe="/:"))
 
     def shutdown():
         if server:
@@ -202,6 +208,20 @@ def desktop():
     opener.pack(side="left", padx=4)
     ttk.Button(frame, text="데이터 폴더", command=lambda: open_folder(C.ROOT)).pack(side="left", padx=4)
     ttk.Button(frame, text="확장프로그램 폴더", command=lambda: open_folder(C.DIRS["extension"])).pack(side="left", padx=4)
+    setup = ttk.LabelFrame(root, text="사전 설치", padding=10)
+    setup.pack(fill="x", padx=20, pady=(0, 12))
+    links = ttk.Frame(setup)
+    links.pack()
+    for label, callback in (
+        ("Chrome 설치", lambda: webbrowser.open("https://www.google.com/chrome/")),
+        ("Ollama 설치", lambda: webbrowser.open("https://ollama.com/download")),
+        ("모델 설치 안내", open_model_guide),
+    ):
+        ttk.Button(links, text=label, command=callback).pack(side="left", padx=4)
+    ttk.Label(setup, text="Ollama 설치·실행 후 관리 화면 → AI·프롬프트에서 모델 받기를 누르세요.\n"
+              "모델 설치 안내는 현재 설정한 모델의 공식 페이지를 엽니다.\n"
+              "음성 인식(Whisper) 모델은 처음 사용할 때 자동으로 받습니다.",
+              wraplength=530, justify="center").pack(pady=(8, 0))
     closer = ttk.Button(root, text="종료", command=shutdown)
     closer.pack()
     root.protocol("WM_DELETE_WINDOW", shutdown)

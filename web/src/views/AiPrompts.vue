@@ -1,5 +1,5 @@
 <script setup>
-import { computed, onMounted, reactive, ref } from 'vue'
+import { computed, onMounted, reactive, ref, watch } from 'vue'
 import { api, qs } from '../lib/api'
 import { store, toast, toastError } from '../lib/store'
 import { clone, same, useDirty } from '../lib/dirty'
@@ -13,7 +13,7 @@ const cfg = ref(null)
 const cfgOrig = ref(null)
 const cfgErrors = ref({})
 const models = ref([])
-const pullName = ref('gemma4:12b')
+const pullName = ref('')
 const { dirty: cfgDirty } = useDirty('ai-config', () => cfg.value && !same(cfg.value.ai, cfgOrig.value?.ai))
 
 async function loadConfig() {
@@ -34,6 +34,14 @@ async function saveConfig() {
   } catch (e) { cfgErrors.value = e.fields || {}; toastError(e) }
 }
 const ai = computed(() => cfg.value?.ai)
+watch(() => ai.value?.ollama.model, (model) => {
+  if (model) pullName.value = model
+})
+const modelGuideUrl = computed(() => {
+  const model = (pullName.value || ai.value?.ollama.model || '').trim()
+  const prefix = model.includes('/') ? 'https://ollama.com/' : 'https://ollama.com/library/'
+  return prefix + model.split('/').map(encodeURIComponent).join('/')
+})
 const ALL = ['ollama', 'gemini', 'anthropic']
 const unused = computed(() => ALL.filter(p => !ai.value.providers.includes(p)))
 function move(i, d) {
@@ -202,6 +210,12 @@ const st = computed(() => store.status)
 
       <section class="card p-4 space-y-3">
         <h3 class="font-semibold text-sm">Ollama</h3>
+        <div class="flex flex-wrap gap-2">
+          <a class="btn btn-sm" href="https://ollama.com/download" target="_blank" rel="noopener noreferrer">Ollama 설치</a>
+          <a class="btn btn-sm" :href="modelGuideUrl" target="_blank" rel="noopener noreferrer">모델 설치 안내</a>
+        </div>
+        <p class="text-xs text-slate-500">처음이라면 Ollama를 설치하고 실행한 뒤 아래의 <b>모델 받기</b>를 누르세요.
+          현재 사용할 모델은 <b>{{ ai.ollama.model }}</b>입니다. 모델 설치 안내에서 공식 페이지를 확인할 수 있습니다.</p>
         <p class="text-xs">
           <span :class="st?.ollama?.connected ? 'text-emerald-600' : 'text-red-600'">● {{ st?.ollama?.connected ? '연결됨' : '연결 안 됨' }}</span>
           · {{ ai.ollama.host }}
@@ -214,8 +228,8 @@ const st = computed(() => store.status)
             <option v-for="m in models" :key="m.name" :value="m.name">{{ m.name }} {{ m.parameter_size ? `· ${m.parameter_size}` : '' }}</option>
           </select></label>
         <div class="flex gap-2">
-          <input v-model="pullName" class="input" placeholder="gemma4:12b" />
-          <button class="btn" :disabled="pullState?.running" @click="pull">모델 받기</button>
+          <input v-model="pullName" class="input" :placeholder="ai.ollama.model" aria-label="내려받을 Ollama 모델" />
+          <button class="btn" :disabled="pullState?.running || !pullName.trim()" @click="pull">모델 받기</button>
           <button class="btn btn-sm" @click="loadModels">↻</button>
         </div>
         <div v-if="pullState" class="text-xs">
