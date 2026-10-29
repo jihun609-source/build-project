@@ -16,10 +16,10 @@ Chrome, Ollama 및 AI 모델, API 키, YouTube 로그인은 아래 안내대로 
 
 | PC | 받을 파일 | 실행 방법 |
 |---|---|---|
-| Windows 10/11 x64 | `AutoSet-1.0.1-windows-x64-setup.exe` | 설치 후 시작 메뉴에서 AutoSet 실행 |
-| Windows 무설치 | `AutoSet-1.0.1-windows-x64-portable.zip` | **전체 압축을 풀고** 폴더 안의 AutoSet.exe 실행 |
-| Apple Silicon 맥 | `AutoSet-1.0.1-macos-arm64.dmg` | AutoSet.app을 Applications로 드래그한 뒤 실행 |
-| Intel 맥 | `AutoSet-1.0.1-macos-x64.dmg` | AutoSet.app을 Applications로 드래그한 뒤 실행 |
+| Windows 10/11 x64 | `AutoSet-1.0.2-windows-x64-setup.exe` | 설치 후 시작 메뉴에서 AutoSet 실행 |
+| Windows 무설치 | `AutoSet-1.0.2-windows-x64-portable.zip` | **전체 압축을 풀고** 폴더 안의 AutoSet.exe 실행 |
+| Apple Silicon 맥 | `AutoSet-1.0.2-macos-arm64.dmg` | AutoSet.app을 Applications로 드래그한 뒤 실행 |
+| Intel 맥 | `AutoSet-1.0.2-macos-x64.dmg` | AutoSet.app을 Applications로 드래그한 뒤 실행 |
 
 파일은 빌드 PC의 `releases/` 또는 GitHub Actions의 Artifacts에 만들어집니다.
 빌드 PC에서는 `releases/windows/`, `releases/macos/arm64/`, `releases/macos/x64/`로 구분합니다.
@@ -102,6 +102,19 @@ API 키는 사용자 데이터 폴더에 저장되며 설치본에는 다른 사
 Safari용 확장프로그램은 제공하지 않습니다. D안 업로드 자체에는 이 확장프로그램을 Chrome에 로드할 필요가 없으며,
 **업로드 설정 → D안 → Chrome 로그인 하기**로 별도의 업로드용 Chrome 계정을 연결합니다.
 C안은 확장프로그램을 설치한 Chrome에서 YouTube Studio에 로그인해야 합니다.
+
+### 맥에서 D안 Chrome 로그인 창이 안 열릴 때
+
+M1·M2·M3 등 Apple Silicon 맥에서는 `macos-arm64.dmg`를 사용하세요.
+Google Chrome을 응용 프로그램(Applications) 폴더에 설치한 뒤, **업로드 설정 → D안**에서
+**Chrome 실행 파일**은 비우고 **Chrome 주 버전**은 `0`으로 저장한 후 **Chrome 로그인 하기**를 누릅니다.
+직접 경로를 지정한다면 `/Applications/Google Chrome.app` 또는 `~/Applications/Google Chrome.app`도 가능합니다.
+프로그램이 설치된 Chrome 버전을 확인하고 CPU에 맞는 드라이버를 내려받습니다.
+처음에는 인터넷 연결과 드라이버 다운로드 시간이 필요합니다.
+
+1.0.2부터 맥 드라이버 다운로드는 설치본에 포함된 CA 인증서를 사용하며 TLS 인증서 검증을 유지합니다.
+실패하면 로그인 버튼 아래의 오류 문구와 **데이터 폴더 → logs/api.log**에 상세 오류가 남습니다.
+창이 열리면 YouTube에 로그인하고 사용할 채널을 고른 뒤 **로그인 완료 · 창 닫기**를 누르세요.
 
 ## 1. 소스로 설치하기 (개발자용)
 

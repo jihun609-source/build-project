@@ -150,6 +150,8 @@ def test_apple_silicon_patcher_is_restored_on_start_failure(monkeypatch, tmp_pat
     monkeypatch.setattr(accounts.sys, 'platform', 'darwin')
     monkeypatch.setattr(accounts.platform, 'machine', lambda: 'arm64')
     monkeypatch.setattr(C, 'root_path', lambda _: tmp_path)
+    monkeypatch.setattr('src.mac_chrome.chrome_binary', lambda _: tmp_path / 'Chrome')
+    monkeypatch.setattr('src.mac_chrome.chrome_major', lambda _: 154)
     with pytest.raises(RuntimeError, match='closed'):
         accounts.create_driver({'step_timeout_sec': 10}, {'profile_dir': 'test'})
     assert uc.Patcher is Patcher

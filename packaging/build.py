@@ -50,11 +50,12 @@ def licenses(stage: Path, ffmpeg: Path):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--version', default='1.0.1')
+    parser.add_argument('--version', default='1.0.2')
     parser.add_argument('--ffmpeg-dir', type=Path)
     parser.add_argument('--iscc', type=Path)
     parser.add_argument('--bundle-only', action='store_true')
     parser.add_argument('--skip-freeze', action='store_true')
+    parser.add_argument('--browser-test', action='store_true', help='Open real Chrome with a disposable profile')
     args = parser.parse_args()
     if not re.fullmatch(r'\d+\.\d+\.\d+', args.version):
         parser.error('version must be N.N.N')
@@ -94,6 +95,15 @@ def main():
     diagnostic = json.loads(report.read_text(encoding='utf-8'))
     if not diagnostic['ok']:
         raise RuntimeError(f'Packaged self-test failed: {diagnostic}')
+    if args.browser_test:
+        browser_report = artifact_dir / f'{label}-browser-test.json'
+        empty_certs = ROOT / 'build/empty-certs'
+        empty_certs.mkdir(parents=True, exist_ok=True)
+        run([executable, '--browser-self-test', '--report', browser_report], timeout=180,
+            env={**env, 'AUTOSET_HOME': str(ROOT / 'build/browser-smoke-data'),
+                 'SSL_CERT_FILE': str(empty_certs / 'missing.pem'), 'SSL_CERT_DIR': str(empty_certs)})
+        if not json.loads(browser_report.read_text(encoding='utf-8'))['ok']:
+            raise RuntimeError(f'Packaged Chrome startup test failed: {browser_report}')
     # Offline child-process path used by the downloader, with the same pipes as production.
     child = subprocess.run([str(executable), '--run-yt-dlp', '--version'], capture_output=True,
                            text=True, timeout=60, env=env)

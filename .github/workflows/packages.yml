@@ -5,7 +5,7 @@ on:
     inputs:
       version:
         description: Package version (N.N.N)
-        default: '1.0.1'
+        default: '1.0.2'
         required: true
   push:
     tags: ['v*']
@@ -72,7 +72,12 @@ jobs:
         shell: bash
         env:
           PACKAGE_VERSION: ${{ needs.version.outputs.value }}
-        run: python packaging/build.py --version "$PACKAGE_VERSION"
+        run: |
+          if [[ "$RUNNER_OS" == "macOS" ]]; then
+            python packaging/build.py --version "$PACKAGE_VERSION" --browser-test
+          else
+            python packaging/build.py --version "$PACKAGE_VERSION"
+          fi
       - name: Save verified installers
         uses: actions/upload-artifact@v4
         with:
@@ -88,6 +93,7 @@ jobs:
           name: Diagnostics-${{ matrix.name }}
           path: |
             releases/${{ matrix.output }}/*self-test.json
+            releases/${{ matrix.output }}/*browser-test.json
             build/AutoSet/warn-AutoSet.txt
           if-no-files-found: ignore
           retention-days: 30

@@ -257,7 +257,8 @@ const grouped = computed(() => {
         <p class="text-xs text-indigo-700">제목·태그: 글자마다 0.05~0.1초 랜덤 타이핑 · 설명: 한 번에 붙여넣기 · 클릭 전: 1.0~2.5초 랜덤 대기</p>
         <div class="grid sm:grid-cols-2 gap-3">
           <label class="sm:col-span-2"><span class="label">Chrome 실행 파일 (비우면 자동 탐색)</span>
-            <input v-model="up.selenium.chrome_binary" class="input" placeholder="C:/Program Files/Google/Chrome/Application/chrome.exe" /></label>
+            <input v-model="up.selenium.chrome_binary" class="input" placeholder="자동 탐색 권장 · 맥: /Applications/Google Chrome.app" />
+            <p class="text-xs text-slate-500">맥에서는 Chrome을 응용 프로그램에 설치하고 비워 두세요. 직접 지정할 때는 .app 경로도 가능합니다.</p></label>
           <label><span class="label">Chrome 주 버전 (0 = 자동)</span>
             <input v-model.number="up.selenium.version_main" type="number" min="0" class="input" />
             <p v-if="errors['upload.selenium.version_main']" class="field-error">{{ errors['upload.selenium.version_main'] }}</p></label>

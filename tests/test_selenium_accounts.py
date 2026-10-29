@@ -20,6 +20,7 @@ from src.workers.uploader import Uploader
 
 @pytest.fixture
 def browser(monkeypatch):
+    monkeypatch.setattr("src.workers.base.file_logger", Mock())
     monkeypatch.setitem(C.DIRS, "extension", Path(__file__).resolve().parents[1] / "chrome-extension")
     cfg = copy.deepcopy(C.DEFAULT_CONFIG["upload"]["selenium"])
     cfg["accounts"] = [

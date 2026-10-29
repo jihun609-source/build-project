@@ -145,6 +145,45 @@ def self_test() -> dict:
             "platform": sys.platform, "data_directory": str(C.ROOT)}
 
 
+def browser_self_test() -> dict:
+    """Open real Chrome with a disposable profile; no server, accounts or uploads."""
+    import copy
+    import platform
+    import tempfile
+    from src import selenium_accounts as accounts
+
+    result = {"ok": False, "platform": sys.platform, "architecture": platform.machine()}
+    C.ROOT.mkdir(parents=True, exist_ok=True)
+    with tempfile.TemporaryDirectory(prefix="browser-check-", dir=C.ROOT) as folder:
+        driver = None
+        try:
+            browser = copy.deepcopy(C.DEFAULT_CONFIG["upload"]["selenium"])
+            with accounts.BROWSER_LOCK:
+                driver = accounts.create_driver(browser, {"profile_dir": folder})
+            driver.get("data:text/html,<title>AutoSet Chrome check</title><p>AutoSet</p>")
+            capabilities = driver.capabilities
+            result.update(browser_version=capabilities["browserVersion"],
+                          driver_version=capabilities["chrome"]["chromedriverVersion"].split()[0],
+                          driver_platform=driver.patcher.platform_name)
+            expected_platform = "mac-arm64" if platform.machine().lower() in ("arm64", "aarch64") else "mac-x64"
+            result["checks"] = {
+                "page_loaded": driver.title == "AutoSet Chrome check",
+                "matching_version": result["browser_version"].split('.')[0] == result["driver_version"].split('.')[0],
+                "native_driver": sys.platform != "darwin" or result["driver_platform"] == expected_platform,
+                "isolated_profile": Path(capabilities["chrome"]["userDataDir"]).resolve() == Path(folder).resolve(),
+            }
+            result["ok"] = all(result["checks"].values())
+        except Exception:
+            result["error"] = traceback.format_exc()
+        finally:
+            if driver:
+                try:
+                    driver.quit()
+                except Exception as exc:
+                    result.update(ok=False, cleanup_error=str(exc))
+    return result
+
+
 def desktop():
     import tkinter as tk
     from tkinter import ttk, messagebox
@@ -275,11 +314,12 @@ def main(argv=None):
         return 0
     parser = argparse.ArgumentParser()
     parser.add_argument("--self-test", action="store_true")
+    parser.add_argument("--browser-self-test", action="store_true")
     parser.add_argument("--report", type=Path)
     args = parser.parse_args(argv)
     attach_stdio()
-    if args.self_test:
-        result = self_test()
+    if args.self_test or args.browser_self_test:
+        result = browser_self_test() if args.browser_self_test else self_test()
         text = json.dumps(result, ensure_ascii=False, indent=2)
         if args.report:
             args.report.parent.mkdir(parents=True, exist_ok=True)

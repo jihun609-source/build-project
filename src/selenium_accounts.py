@@ -126,23 +126,8 @@ def show_browser_window(driver):
 
 
 def apple_silicon_patcher(base):
-    """UC 3.5.5 defaults to mac-x64; use the native driver and a separate cache."""
-    class NativePatcher(base):
-        platform = "darwin"
-        data_path = str(C.ROOT / ".browser" / "driver" / "mac-arm64")
-
-        def _set_platform_name(self):
-            super()._set_platform_name()
-            self.platform_name = "mac_arm64" if self.is_old_chromedriver else "mac-arm64"
-
-        def patch_exe(self):
-            result = super().patch_exe()
-            # Apple Silicon requires valid code-page signatures after modifying a Mach-O binary.
-            subprocess.run(["/usr/bin/codesign", "--force", "--sign", "-", self.executable_path],
-                           check=True, capture_output=True, text=True, timeout=30)
-            return result
-
-    return NativePatcher
+    from .mac_chrome import macos_patcher
+    return macos_patcher(base, arm64=True)
 
 
 def create_driver(browser: dict, entry: dict):
@@ -159,19 +144,26 @@ def create_driver(browser: dict, entry: dict):
     options.add_argument("--start-maximized")
     kwargs = {"options": options, "user_data_dir": str(profile.resolve()),
               "use_subprocess": True, "headless": False}
-    if browser.get("chrome_binary"):
+    mac = sys.platform == "darwin"
+    if mac:
+        from .mac_chrome import chrome_binary, chrome_major
+        binary = chrome_binary(browser.get("chrome_binary", ""))
+        kwargs["browser_executable_path"] = str(binary)
+        kwargs["version_main"] = int(browser.get("version_main") or chrome_major(binary))
+    elif browser.get("chrome_binary"):
         kwargs["browser_executable_path"] = str(C.root_path(browser["chrome_binary"]))
     if browser.get("version_main"):
         kwargs["version_main"] = int(browser["version_main"])
     # Callers hold BROWSER_LOCK. Keep the workaround scoped to constructing this driver.
     original_patcher = uc.Patcher
-    native_mac = sys.platform == "darwin" and platform.machine().lower() in ("arm64", "aarch64")
     try:
-        if native_mac:
-            uc.Patcher = apple_silicon_patcher(original_patcher)
+        if mac:
+            from .mac_chrome import macos_patcher
+            uc.Patcher = macos_patcher(original_patcher,
+                                      arm64=platform.machine().lower() in ("arm64", "aarch64"))
         driver = uc.Chrome(**kwargs)
     finally:
-        if native_mac:
+        if mac:
             uc.Patcher = original_patcher
     driver.set_page_load_timeout(browser["step_timeout_sec"])
     show_browser_window(driver)
@@ -301,6 +293,8 @@ class LoginSession:
             else:
                 message = f"로그인 창 오류: {e}"
             self.update(state="error", message=message)
+            from .workers.base import file_logger
+            file_logger("api").exception("D안 Chrome 로그인 실패")
         finally:
             if driver:
                 try:

@@ -41,7 +41,7 @@ def create_archive(root: Path, output: Path):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--version', default='1.0.1')
+    parser.add_argument('--version', default='1.0.2')
     args = parser.parse_args()
     if not re.fullmatch(r'\d+\.\d+\.\d+', args.version):
         parser.error('Version must be N.N.N')
