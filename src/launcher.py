@@ -165,12 +165,15 @@ def browser_self_test() -> dict:
             result.update(browser_version=capabilities["browserVersion"],
                           driver_version=capabilities["chrome"]["chromedriverVersion"].split()[0],
                           driver_platform=driver.patcher.platform_name)
+            page_loaded = driver.title == "AutoSet Chrome check"
+            driver.get("chrome://version/")
+            profile_path = Path(driver.find_element("id", "profile_path").text).resolve()
             expected_platform = "mac-arm64" if platform.machine().lower() in ("arm64", "aarch64") else "mac-x64"
             result["checks"] = {
-                "page_loaded": driver.title == "AutoSet Chrome check",
+                "page_loaded": page_loaded,
                 "matching_version": result["browser_version"].split('.')[0] == result["driver_version"].split('.')[0],
                 "native_driver": sys.platform != "darwin" or result["driver_platform"] == expected_platform,
-                "isolated_profile": Path(capabilities["chrome"]["userDataDir"]).resolve() == Path(folder).resolve(),
+                "isolated_profile": profile_path.parent == Path(folder).resolve(),
             }
             result["ok"] = all(result["checks"].values())
         except Exception:
